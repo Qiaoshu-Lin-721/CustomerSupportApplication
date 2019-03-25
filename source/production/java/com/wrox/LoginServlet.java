@@ -10,20 +10,42 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.sql.*;
 
 @WebServlet(
         name = "loginServlet",
         urlPatterns = "/login"
 )
+/**
+ * Name: Qiaoshu Lin
+ * Date: 3/24/2019
+ */
 public class LoginServlet extends HttpServlet
 {
     private static final Map<String, String> userDatabase = new Hashtable<>();
 
-    static {
-        userDatabase.put("Nicholas", "password");
-        userDatabase.put("Sarah", "drowssap");
-        userDatabase.put("Mike", "wordpass");
-        userDatabase.put("John", "green");
+    //static {
+    //	  userDatabase.put("Nicholas", "password");
+    //    userDatabase.put("Sarah", "drowssap");
+    //    userDatabase.put("Mike", "wordpass");
+    //    userDatabase.put("John", "green");
+    //}
+    
+    static{
+    	try {
+    		Class.forName("com.mysql.cj.jdbc.Driver");
+    		Connection con = DriverManager.getConnection(
+    				"jdbc:mysql://localhost:3306/database", "root", "19920721");
+    		Statement stmt = con.createStatement();
+    		stmt.executeQuery("use customersupport");
+    		ResultSet rs = stmt.executeQuery("select * from user");
+    		while(rs.next()) {
+    			userDatabase.put(rs.getString(2), rs.getString(5));
+    		}
+    		con.close();
+    	} catch (Exception e) {
+    		System.out.println(e);
+    	}
     }
 
     @Override
